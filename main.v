@@ -235,44 +235,44 @@ begin
 		         		Y <= 11;
 		     		end    
 		 	end
-		11: begin
-		    if (to_first_state) begin 
-		        Y <= 0;
-		     end  
-		     else begin
-		         A <= A >> 3;
-		         B <= B & S2;
-		         Y <= 12;
-		     end
-		 end
-		12: begin 
-		    if (to_first_state) begin 
-		        Y <= 0;
-		     end  
-		     else begin
-		        B <= ~B;
-		        Y <= 13;
-		     end
-		    end
-		 13: begin
-		    if (to_first_state) begin 
-		        Y <= 0;
-		     end  
-		     else begin
-		        S1 <= B | S1;
-		        Y <= 14;
-		      end  
-		    end
-		 14: begin
-		    if (to_first_state) begin 
-		        Y <= 0;
-		     end  
-		     else begin
-		        S1 <= A + S1;
-		        ready <= 1;
-		        Y <= 0;
-		     end   
-		    end  
+		11: 	begin
+			        if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			     	else begin
+			         	A <= A >> 3;
+			         	B <= B & S2;
+			         	Y <= 12;
+			     	end
+		 	end
+		12: 	begin 
+			    	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			     	else begin
+			        	B <= ~B;
+			        	Y <= 13;
+			     	end
+		    	end
+		 13: 	begin
+		    		if (to_first_state) begin 
+		        		Y <= 0;
+		     		end  
+		     		else begin
+		        		S1 <= B | S1;
+		        		Y <= 14;
+		      		end  
+		    	end
+		 14: 	begin
+		    		if (to_first_state) begin 
+		        		Y <= 0;
+		     		end  
+		     		else begin
+		        		S1 <= A + S1;
+		        		ready <= 1;
+		        		Y <= 0;
+		     		end   
+		    	end  
 		endcase
 	else
 	begin
