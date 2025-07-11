@@ -66,34 +66,34 @@ end
 always @ (posedge clk)
 begin
         if(tmp_d1_filt != d1_filt | tmp_d2_filt != d2_filt | tmp_rst_to_first_state != rst_to_first_state) begin
-				case(automat_state)
-                2'b00:  begin 
-							to_first_state <= 0;
-							automat_state <= 2'b11;
-						end
-				2'b10:  begin 
-							to_first_state <= 0;
-							automat_state <= 2'b01;
-						end
-				2'b01:  begin 
-							to_first_state <= 0;
-							automat_state <= 2'b11;
-						end
-				2'b11:  begin 
-							if(rst_spec_dev_flag == 1'b0) 
-								begin
-									to_first_state <= 1;
-									automat_state <= 2'b10;
-								end 
-							else   
-								automat_state <= 2'b01; 
-						end       
+		case(automat_state)
+        	2'b00:  begin 
+			to_first_state <= 0;
+			automat_state <= 2'b11;
+			end
+		2'b10:  begin 
+			to_first_state <= 0;
+			automat_state <= 2'b01;
+			end
+		2'b01:  begin 
+			to_first_state <= 0;
+			automat_state <= 2'b11;
+			end
+		2'b11:  begin 
+				if(rst_spec_dev_flag == 1'b0) 
+					begin
+					to_first_state <= 1;
+					automat_state <= 2'b10;
+					end 
+				else   
+					automat_state <= 2'b01; 
+			end       
                 endcase  
         end
          
-		tmp_d1_filt <= d1_filt;      
-		tmp_d2_filt <= d2_filt;      
-		tmp_rst_to_first_state <= rst_to_first_state;
+	tmp_d1_filt <= d1_filt;      
+	tmp_d2_filt <= d2_filt;      
+	tmp_rst_to_first_state <= rst_to_first_state;
 end
 
 always @ (posedge clk)
@@ -101,17 +101,17 @@ begin
 	if(tmp_reset_spec_dev_extern != reset_spec_dev_extern | tmp_rst_rst_spec_dev_flag != rst_rst_spec_dev_flag)
 	begin
 		case(automat_state2)
-			2'b00:  begin 
-				rst_spec_dev_flag <= 0;
-				automat_state2 <= 2'b01;
+		2'b00:  begin 
+			rst_spec_dev_flag <= 0;
+			automat_state2 <= 2'b01;
 			end
-			2'b01:  begin 
-				rst_spec_dev_flag <= 0;
-				automat_state2 <= 2'b11;
+		2'b01:  begin 
+			rst_spec_dev_flag <= 0;
+			automat_state2 <= 2'b11;
 			end
-			2'b11:  begin 
-				rst_spec_dev_flag <= 1;
-				automat_state2 <= 2'b01;
+		2'b11:  begin 
+			rst_spec_dev_flag <= 1;
+			automat_state2 <= 2'b01;
 			end
 		endcase
 	end	
@@ -122,163 +122,165 @@ end
 
 divider divider1(clk,reset_divider,clk_divided);
 
-always @ (posedge clk_divided)begin
-if (!reset_spec_dev_extern)
- case (Y)
-0: begin
- A <= d1_filt;
- B <= d2_filt;
- S1 <= 0;
- S2 <= 0; 
- S3 <= 0;
- ready <= 0;
- rst_to_first_state <= 1;
- Y <= 1;
- end
-1: begin
-     rst_to_first_state <= 0;
-     rst_rst_spec_dev_flag <= 0;
-     if (to_first_state) begin 
-        Y <= 0;
-     end   
-     else begin
-         S2 <= A << 2;
-         S1 <= A^B;
-         if(A<=9) Y <= 2;
-         else Y <= 10;
-     end
- end
-2: begin 
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-    S3 <= B >> 3; 
-    Y <= 3;
-    end
-  end  
-3: begin
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-         S3 <= S1 << 3;
-         S2 <= S2 + S3;
-         Y <= 4;
-     end    
- end
-4: begin
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-         S1 <= B << 2;
-         S3 <= S3 + S1;
-         Y <= 5;
-     end    
- end
-5: begin 
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        S3 <= S3 + S2;
-        Y <= 6;
-     end
-   end
-6: begin 
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        S1 <= S1 + B;
-        Y <= 7;
-     end
-    end
-7: begin 
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        S1 <= A + S1;
-        Y <= 8;
-      end
-    end
-8: begin 
-        if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        S1 <= ~S1;
-        Y <= 9;
-     end   
-    end
-9: begin 
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        S1 <= S1^S3;
-        ready <= 1;
-        Y <= 0;
-     end   
-    end
-10: begin
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-         B <= B << 1;
-         A <= A + B;
-         Y <= 11;
-     end    
- end
-11: begin
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-         A <= A >> 3;
-         B <= B & S2;
-         Y <= 12;
-     end
- end
-12: begin 
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        B <= ~B;
-        Y <= 13;
-     end
-    end
- 13: begin
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        S1 <= B | S1;
-        Y <= 14;
-      end  
-    end
- 14: begin
-    if (to_first_state) begin 
-        Y <= 0;
-     end  
-     else begin
-        S1 <= A + S1;
-        ready <= 1;
-        Y <= 0;
-     end   
-    end  
-endcase
-else
+always @ (posedge clk_divided)
 begin
- A <=0; B <= 0; S1 <= 0;
- S2 <= 0; S3 <= 0;
- Y <= 0; ready <= 0;
- rst_rst_spec_dev_flag <= 1;
-end
+	if (!reset_spec_dev_extern)
+		case (Y)
+		0: 	begin
+				A <= d1_filt;
+			 	B <= d2_filt;
+			 	S1 <= 0;
+			 	S2 <= 0; 
+			 	S3 <= 0;
+			 	ready <= 0;
+			 	rst_to_first_state <= 1;
+			 	Y <= 1;
+		 	end
+		1: 	begin
+			     	rst_to_first_state <= 0;
+			     	rst_rst_spec_dev_flag <= 0;
+				
+			     	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end   
+			        else begin
+				        S2 <= A << 2;
+				        S1 <= A^B;
+				        if(A<=9) Y <= 2;
+				        else Y <= 10;
+			        end
+		 	end
+		2: 	begin 
+			    	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			    	else begin
+			    	     	S3 <= B >> 3; 
+			    		Y <= 3;
+			    	end
+		 	end  
+		3: 	begin
+			    	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			     	else begin
+				        S3 <= S1 << 3;
+				        S2 <= S2 + S3;
+				        Y <= 4;
+			     	end    
+		 	end
+		4: 	begin
+			    	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			     	else begin
+			         	S1 <= B << 2;
+			         	S3 <= S3 + S1;
+			         	Y <= 5;
+			     	end    
+		 	end
+		5: 	begin 
+			    	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			     	else begin
+			        	S3 <= S3 + S2;
+			        	Y <= 6;
+			     	end
+		   	end
+		6: 	begin 
+			    	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			     	else begin
+			        	S1 <= S1 + B;
+			        	Y <= 7;
+			     	end
+		    	end
+		7: 	begin 
+			    	if (to_first_state) begin 
+			        	Y <= 0;
+			     	end  
+			     	else begin
+			        	S1 <= A + S1;
+			        	Y <= 8;
+			      	end
+		    	end
+		8: 	begin 
+		        	if (to_first_state) begin 
+		        		Y <= 0;
+			     	end  
+			     	else begin
+			        	S1 <= ~S1;
+			        	Y <= 9;
+			     	end   
+		    	end
+		9: 	begin 
+		    		if (to_first_state) begin 
+		        		Y <= 0;
+		     		end  
+		     		else begin
+		        		S1 <= S1^S3;
+		        		ready <= 1;
+		        		Y <= 0;
+		     		end   
+		    	end
+		10: 	begin
+		    		if (to_first_state) begin 
+		        		Y <= 0;
+		     		end  
+		     		else begin
+		         		B <= B << 1;
+		         		A <= A + B;
+		         		Y <= 11;
+		     		end    
+		 	end
+		11: begin
+		    if (to_first_state) begin 
+		        Y <= 0;
+		     end  
+		     else begin
+		         A <= A >> 3;
+		         B <= B & S2;
+		         Y <= 12;
+		     end
+		 end
+		12: begin 
+		    if (to_first_state) begin 
+		        Y <= 0;
+		     end  
+		     else begin
+		        B <= ~B;
+		        Y <= 13;
+		     end
+		    end
+		 13: begin
+		    if (to_first_state) begin 
+		        Y <= 0;
+		     end  
+		     else begin
+		        S1 <= B | S1;
+		        Y <= 14;
+		      end  
+		    end
+		 14: begin
+		    if (to_first_state) begin 
+		        Y <= 0;
+		     end  
+		     else begin
+		        S1 <= A + S1;
+		        ready <= 1;
+		        Y <= 0;
+		     end   
+		    end  
+		endcase
+	else
+	begin
+		A <=0; B <= 0; S1 <= 0;
+		S2 <= 0; S3 <= 0;
+		Y <= 0; ready <= 0;
+		rst_rst_spec_dev_flag <= 1;
+	end
 end
 
 endmodule
